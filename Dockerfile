@@ -68,20 +68,12 @@ RUN cd /tmp \
  && make install \
  && rm -rf /tmp/xrdcl-authz-plugin
 
+# Copy coffea utilities to libexec/coffea
+COPY --chown=${NB_USER} --chmod=755 libexec/ ${CONDA_PATH}/libexec/coffea/
+
 # Configure supervisord ######################################################
 # Loading config from /usr/local/etc/supervisord/${SUPERVISORD_PROFILE}.d
 # We use singleuser as the default profile
-# To use a custom set of configs, mount a configmap and set the envvar
 ENV SUPERVISORD_PROFILE="singleuser"
-COPY --chown=${NB_USER} supervisord.conf ${CONDA_PATH}/etc/supervisord.conf
-
-##############################################################################
-# singleuser services ########################################################
-# Watch, copy, and chown secret directory
-#   Parameters:
-#     SECRET_SOURCE_DIR=/source
-#     SECRET_TARGET_DIR=/target
-#     SECRET_TARGET_CHOWN={uid}:{gid}
-#     SECRET_TARGET_CHMOD=F0600
-COPY --chown=${NB_USER} k8s-secret-chowner.sh   ${CONDA_PATH}/libexec
-COPY --chown=${NB_USER} k8s-secret-chowner.conf ${CONDA_PATH}/etc/supervisord/singleuser.d/
+COPY --chown=${NB_USER} supervisord.conf ${CONDA_PATH}/etc
+COPY --chown=${NB_USER} supervisord/     ${CONDA_PATH}/etc/supervisord/
