@@ -1,4 +1,3 @@
-
 FROM almalinux/8-minimal
 
 # Install required packages (not available in conda)
@@ -72,8 +71,12 @@ RUN cd /tmp \
 COPY --chown=${NB_USER} --chmod=755 libexec/ ${CONDA_PATH}/libexec/coffea/
 
 # Configure supervisord ######################################################
-# Loading config from /usr/local/etc/supervisord/${SUPERVISORD_PROFILE}.d
-# We use singleuser as the default profile
+# Load runtime config from supervisord/conf.d and ${SUPERVISORD_PROFILE}.d
+# Use singleuser as the default profile
 ENV SUPERVISORD_PROFILE="singleuser"
 COPY --chown=${NB_USER} supervisord.conf ${CONDA_PATH}/etc
 COPY --chown=${NB_USER} supervisord/     ${CONDA_PATH}/etc/supervisord/
+
+# Allow custom conda environments
+# https://z2jh.jupyter.org/en/stable/jupyterhub/customizing/user-environment.html#allow-users-to-create-their-own-conda-environments-for-notebooks
+RUN conda config --system --append envs_dirs "~/conda-envs"

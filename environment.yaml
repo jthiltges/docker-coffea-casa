@@ -18,6 +18,7 @@ dependencies:
   - dask-gateway
   - dask-jobqueue
   - bokeh
+  - nb_conda_kernels
   # Add workqueue
   - ndcctools
     # core scipy
